@@ -8,8 +8,8 @@ import axios from 'axios' // 引入axios
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-axios.defaults.baseURL = 'http://localhost:8080/#/'
-Vue.prototype.$http = axios // 给axios赋值给全局属性
+axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
+Vue.prototype.$axios = axios // 给axios赋值给全局属性
 new Vue({
   router,
   render: h => h(App)
