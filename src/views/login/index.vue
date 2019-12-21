@@ -65,10 +65,24 @@ export default {
   methods: {
     subminLogin () {
       // 手动校验
-      this.$refs.myForm.validate(function (isOK) {
+      this.$refs.myForm.validate((isOK) => {
         if (isOK) {
           // 说明校验通过 应该调用登录接口
-          console.log('校验通过,开始调用登录接口')
+          // axios调用这两种参数:body参数,get参数(也叫做 地址参数 或 路由参数 或 查询参数)
+          // body参数放置在axios里的  data
+          // get参数放置在axios里的 params
+          this.$axios({
+            url: '/authorizations',
+            method: 'post', // 请求地址axios没有指定类型,默认走get类型
+            data: this.loginForm // 因为把数据给了loginForm,所以直接调用
+          }).then(result => {
+            // 只接受正确结果
+            // 前端缓存   值的名称,token值
+            // 登录成功返回给我们的令牌
+            window.localStorage.setItem('user-token', result.data.data.token)
+          }).catch(() => {
+
+          })
         }
       })
     }
