@@ -8,11 +8,11 @@
         <el-col class="right" :span="12">
             <!-- justify 配置垂直排列方式 align 配置水平排列方式-->
             <el-row type="flex" justify="end" align="middle">
-                <img src="../../assets/img/header.jpg" alt="">
+                <img :src="userInfo.photo ? userInfo.photo : defaultImg" alt="">
                 <!-- 下拉菜单 -->
                 <el-dropdown>
                     <span class="el-dropdown-link">
-                      江苏传智播客<i class="el-icon-arrow-down el-icon--right"></i>
+                      {{userInfo.name}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item>个人信息</el-dropdown-item>
@@ -27,7 +27,23 @@
 
 <script>
 export default {
-
+  data () {
+    return {
+      userInfo: {}, // 定义用户对象
+      defaultImg: require('../../assets/img/header.jpg') // 将图片地址转换为一个变量
+    }
+  },
+  created () {
+    let token = localStorage.getItem('user-token') // 获取用户令牌
+    this.$axios({
+      url: '/user/profile',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(result => {
+      this.userInfo = result.data.data
+    })
+  }
 }
 </script>
 
