@@ -20,6 +20,9 @@ const routes = [
     }, {
       path: 'comment', // 这个是相对写法  完整写法: /home/comment
       component: () => import('../views/comment')
+    }, {
+      path: '/home/material',
+      component: () => import('../views/material')
     }]
   }, {
     path: '/login',

@@ -18,9 +18,9 @@
       <!-- 二级折叠菜单 -->
       <el-submenu index="2">
         <span  slot="title">粉丝管理</span>
-        <el-menu-item index="/home/imgtext">图文数据</el-menu-item>
+        <el-menu-item index="/home/picture">图文数据</el-menu-item>
         <el-menu-item index="/home/fansinfo">粉丝概况</el-menu-item>
-        <el-menu-item index="/home/fansportrayal">粉丝画像</el-menu-item>
+        <el-menu-item index="/home/fanspicture">粉丝画像</el-menu-item>
         <el-menu-item index="/home/fanslist">粉丝列表</el-menu-item>
       </el-submenu>
       <!-- 没有折叠的选项 -->
