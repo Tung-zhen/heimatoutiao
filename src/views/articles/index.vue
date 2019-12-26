@@ -7,6 +7,14 @@
     <el-form style="padding-left:50px">
         <el-form-item label="文章状态：">
             <!-- 放置单选组 -->
+            <!-- 第一种方法 监听组件的形式去做搜索 -->
+            <!-- <el-radio-group v-model="searchForm.status" @change="changeCondition">
+              <el-radio :label="5">全部</el-radio>
+              <el-radio :label="0">草稿</el-radio>
+              <el-radio :label="1">待审核</el-radio>
+              <el-radio :label="2">审核通过</el-radio>
+              <el-radio :label="3">审核失败</el-radio>
+            </el-radio-group> -->
             <el-radio-group v-model="searchForm.status">
               <el-radio :label="5">全部</el-radio>
               <el-radio :label="0">草稿</el-radio>
@@ -16,14 +24,19 @@
             </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表：">
+            <!-- 第一种方法 监听组件的形式去做搜索 -->
+            <!-- <el-select placeholder="请选择频道" v-model="searchForm.channel_id" @change="changeCondition">
+                <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select> -->
             <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
-                <!-- label显示值    value存储值 -->
                 <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
         </el-form-item>
         <el-form-item label="时间选择：">
             <!-- 日期选择器 日期范围 -->
-            <el-date-picker v-model="searchForm.dataRange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+            <!-- 第一种方法 监听组件的形式去做搜索 -->
+            <!-- <el-date-picker @change="changeCondition" value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker> -->
+            <el-date-picker value-format="yyyy-MM-dd" v-model="searchForm.dateRange" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
         </el-form-item>
     </el-form>
     <el-row class="totle" type="flex" align="middle">
@@ -56,11 +69,21 @@ export default {
       searchForm: {
         status: 5, // 默认选中全部
         channel_id: null, // 默认不选中任何一个分类
-        dataRange: [] // 日期范围
+        dateRange: [] // 日期范围
       },
       channels: [], // 用来接收频道数据
       list: [],
       defaultImg: require('../../assets/img/de.jpg') // 默认图片
+    }
+  },
+  watch: {
+    searchForm: {
+      handler: function () {
+        // 执行handler数据已经变成最新的了
+        // this指向组件实例
+        this.changeCondition() // 直接调用条件改变方法
+      },
+      deep: true
     }
   },
   filters: {
@@ -97,6 +120,17 @@ export default {
     }
   },
   methods: {
+    // 改变条件
+    changeCondition () {
+      let params = {
+        // 因为5是前端定义的一个标识, 如果等于5 表示查全部, 全部应该什么都不传 => 直接传null
+        status: this.searchForm.status === 5 ? null : this.searchForm.status,
+        channel_id: this.searchForm.channel_id,
+        begin_pubdate: this.searchForm.dateRange.length ? this.searchForm.dateRange[0] : null, // 开始时间
+        end_pubdate: this.searchForm.dateRange.length > 1 ? this.searchForm.dateRange[1] : null // 截止时间
+      }
+      this.getArticles(params)
+    },
     // 获取所有频道
     getChannles () {
       this.$axios({
@@ -106,9 +140,10 @@ export default {
       })
     },
     // 获取文章列数据
-    getArticles () {
+    getArticles (params) {
       this.$axios({
-        url: '/articles'
+        url: '/articles',
+        params
       }).then(result => {
         this.list = result.data.results // 获取文章列表数据
       })
