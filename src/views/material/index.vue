@@ -8,7 +8,7 @@
       </bread-crumb>
       <el-tabs v-model="activeName" @tab-click="changeTab">
           <el-tab-pane label="全部图片" name="all">
-            <!-- 生成页面结构 -->
+            <!-- 生成全部素材页面结构 -->
               <div class="img-list">
                 <!-- 使用v-for对数据进行遍历 -->
                 <el-card class="img-card" v-for="item in list" :key="item.id">
@@ -29,6 +29,10 @@
               </div>
           </el-tab-pane>
       </el-tabs>
+      <!-- 分页公共组件 -->
+        <el-row type="flex" justify="center">
+          <el-pagination @current-change="changePage" :current-page="page.currentPage" :page-size="page.pageSize" :total="page.total" background layout="prev, pager, next"></el-pagination>
+        </el-row>
   </el-card>
 </template>
 
@@ -37,22 +41,36 @@ export default {
   data () {
     return {
       activeName: 'all', // 设置默认选中的标签
-      list: [] // 接收素材数据
+      list: [], // 接收素材数据
+      page: { // 设置分页数据
+        total: 0, // 总条目数 类型为number
+        pageSize: 10, // 每页显示条目个数 类型为number  默认每页条数为10
+        currentPage: 1 // 当前页数  类型为number  默认页码为1
+      }
     }
   },
   methods: {
+    // 改变页码方法
+    changePage (newPage) {
+      this.page.currentPage = newPage // 最新的页码
+      this.getMaterial() // 重新请求
+    },
     // 切换页签方法
     changeTab () {
+      this.page.currentPage = 1 // 将页码重置为1
       this.getMaterial() // 调用获取数据方法
     },
     getMaterial () {
       this.$axios({
         url: '/user/images',
         params: {
+          page: this.page.currentPage,
+          per_page: this.page.pageSize,
           collect: this.activeName === 'collect' // flase是获取所有数据 true是获取收藏数据
         }
       }).then(result => {
         this.list = result.data.results // 获取图片数据 有可能是收藏的图片,也有可能是所有的图片 根据点击页签进行相应操作
+        this.page.total = result.data.total_count // 获取总数
       })
     }
   },
