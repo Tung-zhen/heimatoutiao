@@ -23,6 +23,9 @@ const routes = [
     }, {
       path: '/home/material',
       component: () => import('../views/material')
+    }, {
+      path: '/home/articles', // 文章列表
+      component: () => import('../views/articles')
     }]
   }, {
     path: '/login',
