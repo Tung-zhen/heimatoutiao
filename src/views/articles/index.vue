@@ -29,14 +29,14 @@
     <el-row class="totle" type="flex" align="middle">
         <span>共找到1000条符合条件的内容</span>
     </el-row>
-    <div class="article-item">
+    <div class="article-item" v-for="item in list" :key="item.id.toString()">
         <!-- 左侧 -->
         <div class="left">
-            <img src="../../assets/img/de.jpg" alt="">
+            <img :src="item.cover.images.length ? item.cover.images[0] : defaultImg" alt="">
             <div class="info">
-                <span>哈哈哈哈哈哈哈哈哈哈哈</span>
-                <el-tag class="tag">标签一</el-tag>
-                <span class="date">2019</span>
+                <span>{{item.title}}</span>
+                <el-tag class="tag" :type="item.status | filterType">{{item.status | filterStatus}}</el-tag>
+                <span class="date">{{item.pubdate}}</span>
             </div>
         </div>
         <!-- 右侧 -->
@@ -58,7 +58,42 @@ export default {
         channel_id: null, // 默认不选中任何一个分类
         dataRange: [] // 日期范围
       },
-      channels: [] // 用来接收频道数据
+      channels: [], // 用来接收频道数据
+      list: [],
+      defaultImg: require('../../assets/img/de.jpg') // 默认图片
+    }
+  },
+  filters: {
+    //   改变标签名称
+    filterStatus (value) {
+      // 文章状态 0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除
+      switch (value) {
+        case 0:
+          return '草稿'
+        case 1:
+          return '待审核'
+        case 2:
+          return '已发表'
+        case 3:
+          return '审核失败'
+        default:
+          break
+      }
+    },
+    // 改变标签颜色
+    filterType (value) {
+      switch (value) {
+        case 0:
+          return 'warning'
+        case 1:
+          return 'info'
+        case 2:
+          return ''
+        case 3:
+          return 'danger'
+        default:
+          break
+      }
     }
   },
   methods: {
@@ -69,10 +104,19 @@ export default {
       }).then(result => {
         this.channels = result.data.channels
       })
+    },
+    // 获取文章列数据
+    getArticles () {
+      this.$axios({
+        url: '/articles'
+      }).then(result => {
+        this.list = result.data.results // 获取文章列表数据
+      })
     }
   },
   created () {
     this.getChannles() // 获取文章数据
+    this.getArticles() // 获取文章列表数据
   }
 }
 </script>
