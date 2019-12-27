@@ -19,13 +19,16 @@ const routes = [
       component: Home2 // 二级路由地址不写的话,代表二级路由的默认组件
     }, {
       path: 'comment', // 这个是相对写法  完整写法: /home/comment
-      component: () => import('../views/comment')
+      component: () => import('../views/comment') // 按需加载
     }, {
       path: '/home/material',
       component: () => import('../views/material')
     }, {
       path: '/home/articles', // 文章列表
       component: () => import('../views/articles')
+    }, {
+      path: 'publish',
+      component: () => import('../views/publish')
     }]
   }, {
     path: '/login',
