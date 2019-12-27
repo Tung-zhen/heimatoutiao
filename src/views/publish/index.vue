@@ -27,7 +27,9 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
-          <el-select></el-select>
+          <el-select>
+            <el-option v-for="item in channels" :key="item.id" :value="item.id" :label="item.name"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary">发表</el-button>
@@ -39,7 +41,24 @@
 
 <script>
 export default {
-
+  data () {
+    return {
+      channels: [] // 用来接收频道数据
+    }
+  },
+  methods: {
+    // 获取所有频道
+    getChannles () {
+      this.$axios({
+        url: '/channels'
+      }).then(result => {
+        this.channels = result.data.channels
+      })
+    }
+  },
+  created () {
+    this.getChannles() // 调用获取频道数据的方法
+  }
 }
 </script>
 
