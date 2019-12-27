@@ -40,7 +40,7 @@
         </el-form-item>
     </el-form>
     <el-row class="totle" type="flex" align="middle">
-        <span>共找到1000条符合条件的内容</span>
+        <span>共找到{{page.total}}条符合条件的内容</span>
     </el-row>
     <div class="article-item" v-for="item in list" :key="item.id.toString()">
         <!-- 左侧 -->
@@ -54,8 +54,9 @@
         </div>
         <!-- 右侧 -->
         <div class="right">
-            <span><i class="el-icon-edit"></i>修改</span>
-            <span><i class="el-icon-delete"></i>删除</span>
+            <span><el-button type="primary" icon="el-icon-edit" size="small">修改</el-button></span>
+            <!-- 注册删除事件 -->
+            <span @click="delMaterial(item.id)"><el-button type="primary" icon="el-icon-delete" size="small">删除</el-button></span>
         </div>
     </div>
     <el-row type="flex" justify="center" align="middle" style="height:60px">
@@ -135,6 +136,25 @@ export default {
     }
   },
   methods: {
+    // 删除文章方法
+    delMaterial (id) {
+      this.$confirm('是否要删除该文章?').then(() => {
+        // 调用删除接口
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${id.toString()}`
+        }).then(result => {
+          // 提示
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          // 重新拉取数据
+          // this.page.currentPage = 1 // 根据业务 处理 如果删除了数据 是否回到第一页根据具体业务而定
+          this.getConditionArticle()
+        })
+      })
+    },
     //   改变页码方法
     changePage (newPage) {
       this.page.currentPage = newPage // 最新页码
@@ -220,7 +240,7 @@ export default {
                 span {
                     font-size: 14px;
                     margin-right:8px;
-                    cursor: pointer; // 修改鼠标样式为小手
+                    // cursor: pointer; // 修改鼠标样式为小手
                 }
             }
         }
